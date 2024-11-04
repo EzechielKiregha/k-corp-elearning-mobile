@@ -11,10 +11,10 @@ class Course {
   final double rate;
   bool isFavorite;
   final double price;
-  final CourseCategory courseCategory;
+  final String courseCategory;
   final String duration;
   final int lessonNo;
-  final List<Section> sections;
+  late final List<Section> sections;
 
   Course({
     required this.id,
@@ -42,7 +42,7 @@ class Course {
       'createdBy': createdBy,
       'createdDate': createdDate,
       'rate': rate,
-      'isFavorite': isFavorite ? 1 : 0,
+      'isFavorite': isFavorite ? true : false,
       'price': price,
       'courseCategory': courseCategory.toString(),
       'duration': duration,
@@ -62,7 +62,7 @@ class Course {
       rate: map['rate'],
       isFavorite: map['isFavorite'] == 1,
       price: map['price'],
-      courseCategory: CourseCategory.values.firstWhere((e) => e.toString() == map['courseCategory']),
+      courseCategory: map['courseCategory'],
       duration: map['duration'],
       lessonNo: map['lessonNo'],
       sections: [], // Add sections later if needed

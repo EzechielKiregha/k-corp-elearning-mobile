@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:k_corp_elearning/argument/account_arguments.dart';
 import 'package:k_corp_elearning/argument/checkout_argument.dart';
 import 'package:k_corp_elearning/argument/course_argument.dart';
-import 'package:k_corp_elearning/argument/course_home_argument.dart';
-import 'package:k_corp_elearning/argument/my_course_list_args.dart';
-import 'package:k_corp_elearning/argument/wish_list_arguments.dart';
 import 'package:k_corp_elearning/screens/account/account_screen.dart';
-import 'package:k_corp_elearning/screens/account/course_management_screen.dart';
+import 'package:k_corp_elearning/screens/account/admin/course_creation_screen.dart';
+import 'package:k_corp_elearning/screens/account/admin/course_management_screen.dart';
 import 'package:k_corp_elearning/screens/auth/login_screen.dart';
 import 'package:k_corp_elearning/screens/auth/signup_screen.dart';
 import 'package:k_corp_elearning/screens/courses/wishlist_screen.dart';
@@ -39,6 +36,11 @@ class MyApp extends StatelessWidget {
         RouteNames.login: (context) => LoginScreen(),
         RouteNames.signup: (context) => SignupScreen(),
         RouteNames.manageCourse : (context) => CourseManagementScreen(),
+        RouteNames.accountScreen : (context) => AccountScreen(),
+        RouteNames.courseHome : (context) => CourseHome(),
+        RouteNames.wishList : (context) => WishlistScreen(),
+        RouteNames.myCourseList : (context) => MyCourseList(),
+        RouteNames.oneCourseDetails: (context) => CreateCourseScreen(),
       },
 
       onGenerateRoute: (settings){
@@ -51,42 +53,7 @@ class MyApp extends StatelessWidget {
             courseList: args.courseList,
             totalPrice: args.totalPrice
             ));
-        } else if (settings.name == RouteNames.courseHome){
-          final args = settings.arguments as CourseHomeArguments;
-          return MaterialPageRoute(
-            builder: (context) => CourseHome(
-              userId: args.userId,
-            )
-          );
-        } else if (settings.name == RouteNames.accountScreen){
-          final args = settings.arguments as AccountArguments;
-          return MaterialPageRoute(
-            builder: (context) => AccountScreen(
-              userId: args.userId,
-            )
-          );
-        } else if (settings.name == RouteNames.wishList){
-          final args = settings.arguments as WishListArguments;
-          return MaterialPageRoute(
-            builder: (context) => WishlistScreen(
-              userId: args.userId,
-            )
-          );
-        } else if (settings.name == RouteNames.myCourseList){
-          final args = settings.arguments as MyCourseListArgs;
-          return MaterialPageRoute(
-            builder: (context) => MyCourseList(
-              userId: args.userId,
-            )
-          );
-        } else if (settings.name == RouteNames.accountScreen){
-          final args = settings.arguments as AccountArguments;
-          return MaterialPageRoute(
-            builder: (context) => AccountScreen(
-              userId: args.userId,
-            )
-          );
-        } 
+        }
         return null;
       });
   }

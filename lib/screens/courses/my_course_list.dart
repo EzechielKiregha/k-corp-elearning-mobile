@@ -5,9 +5,39 @@ import 'package:k_corp_elearning/constants.dart';
 import 'package:k_corp_elearning/data_provider/my_course_data_provider.dart';
 import 'package:k_corp_elearning/model/my_course.dart';
 
-class MyCourseList extends StatelessWidget {
-  const MyCourseList({super.key, required this.userId});
-  final int userId;
+import '../../shared_preferences.dart';
+
+class MyCourseList extends StatefulWidget {
+  const MyCourseList({super.key});
+
+  @override
+  State<MyCourseList> createState() => _MyCourseListState();
+}
+
+class _MyCourseListState extends State<MyCourseList> {
+
+  String userName = "USER";
+  String userRole = 'ADMIN';
+  int userId = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    UserPreferences prefs = UserPreferences();
+    String? name = await prefs.getUsername();
+    String? role = await prefs.getUserRole();
+    int? id = await prefs.getUserId();
+    setState(() {
+      userName = name ?? "User";
+      userRole = role ?? "STUDENT";
+      userId = id ?? 1;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +52,7 @@ class MyCourseList extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          
+
           padding: const EdgeInsets.all(8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,7 +171,6 @@ class MyCourseList extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: ButtonOption(
          selected : 2,
-         userId: userId,
       ),
     );
   }

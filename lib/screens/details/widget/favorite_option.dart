@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:k_corp_elearning/model/course.dart';
+import 'package:k_corp_elearning/model/course_db.dart';
 
 class FavoriteOption extends StatefulWidget {
   const FavoriteOption({ super.key, required this.course });

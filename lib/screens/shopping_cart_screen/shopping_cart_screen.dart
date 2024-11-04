@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:k_corp_elearning/argument/checkout_argument.dart';
 import 'package:k_corp_elearning/constants.dart';
 import 'package:k_corp_elearning/data_provider/shopping_cart_data_provider.dart';
-import 'package:k_corp_elearning/model/course.dart';
+import 'package:k_corp_elearning/model/course_db.dart';
 import 'package:k_corp_elearning/util/route_names.dart';
 
 class ShoppingCartScreen extends StatefulWidget {

@@ -59,7 +59,7 @@ class _SignupScreenState extends State<SignupScreen> {
       body: Column(
         mainAxisAlignment : MainAxisAlignment.center,
         children: [
-          Image.asset("assets/images/intro/signup.png", height: 400, width: 400,),
+          Image.asset("assets/images/intro/signup.png", height: 300, width: 300,),
           SizedBox(
             height: 300,
             child: Padding(

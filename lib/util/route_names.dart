@@ -10,4 +10,8 @@ class RouteNames {
   static const String signup = '/signup';
   static const String manageCourse = '/manageCourse';
   static const String accountScreen = '/accoutScreen';
+  static const String settings = '/account-setting';
+
+  // create course related routes
+  static const String oneCourseDetails = '/oneCourseDetails';
 }

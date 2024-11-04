@@ -6,11 +6,40 @@ import 'package:k_corp_elearning/argument/wish_list_arguments.dart';
 import 'package:k_corp_elearning/constants.dart';
 import 'package:k_corp_elearning/util/route_names.dart';
 
-class ButtonOption extends StatelessWidget {
-  const ButtonOption({super.key, required this.selected, required this.userId});
+import '../shared_preferences.dart';
+
+class ButtonOption extends StatefulWidget {
+  const ButtonOption({super.key, required this.selected});
 
   final int selected;
-  final int userId;
+
+  @override
+  State<ButtonOption> createState() => _ButtonOptionState();
+}
+
+class _ButtonOptionState extends State<ButtonOption> {
+
+  String userName = "USER";
+  String userRole = 'ADMIN';
+  int userId = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    UserPreferences prefs = UserPreferences();
+    String? name = await prefs.getUsername();
+    String? role = await prefs.getUserRole();
+    int? id = await prefs.getUserId();
+    setState(() {
+      userName = name ?? "User";
+      userRole = role ?? "ADMIN";
+      userId = id ?? 1;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +97,7 @@ class ButtonOption extends StatelessWidget {
                     Text("Courses", style: TextStyle(
                       fontSize: 13,
                       color : getSelectedColor(2)
-              
+
                     ),),
                   ],
                 ),
@@ -94,7 +123,7 @@ class ButtonOption extends StatelessWidget {
                     Text("Wishlist", style: TextStyle(
                       fontSize: 13,
                       color : getSelectedColor(3)
-              
+
                     ),),
                   ],
                 ),
@@ -120,7 +149,7 @@ class ButtonOption extends StatelessWidget {
                     Text("Account", style: TextStyle(
                       fontSize: 13,
                       color : getSelectedColor(4)
-              
+
                     ),),
                   ],
                 ),
@@ -133,34 +162,30 @@ class ButtonOption extends StatelessWidget {
   }
 
   Color getSelectedColor(int optionIndex){
-    return (selected == optionIndex) ? kPrimaryColor : Colors.grey.shade800;
+    return (widget.selected == optionIndex) ? kPrimaryColor : Colors.grey.shade800;
   }
+
   void openScreen(BuildContext context, int selectedOptionNo){
 
     String routeName = RouteNames.courseHome;
     switch (selectedOptionNo) {
       case 2:
         routeName = RouteNames.myCourseList;
-        Navigator.pushReplacementNamed(context, routeName,
-          arguments: MyCourseListArgs(userId),
+        Navigator.pushReplacementNamed(context, routeName
         );
         break;
       case 3:
         routeName = RouteNames.wishList;
-        Navigator.pushReplacementNamed(context, routeName,
-          arguments: WishListArguments(userId),
+        Navigator.pushReplacementNamed(context, routeName
         );
         break;
       case 4:
         routeName = RouteNames.accountScreen;
-        Navigator.pushReplacementNamed(context, routeName,
-          arguments: AccountArguments(userId),
+        Navigator.pushReplacementNamed(context, routeName
         );
         break;
     }
-    Navigator.pushReplacementNamed(context, routeName,
-      arguments: CourseHomeArguments(userId),
+    Navigator.pushReplacementNamed(context, routeName
     );
   }
-
 }

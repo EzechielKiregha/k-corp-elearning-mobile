@@ -8,12 +8,40 @@ import 'package:k_corp_elearning/screens/home/widget/course_search.dart';
 import 'package:k_corp_elearning/screens/home/widget/featured_course.dart';
 import 'package:k_corp_elearning/screens/home/widget/header.dart';
 import 'package:k_corp_elearning/screens/home/widget/offers.dart';
+
+import '../../shared_preferences.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 
-class CourseHome extends StatelessWidget {
-  const CourseHome({super.key, required this.userId});
+class CourseHome extends StatefulWidget {
+  const CourseHome({super.key});
 
-  final int userId;
+  @override
+  State<CourseHome> createState() => _CourseHomeState();
+}
+
+class _CourseHomeState extends State<CourseHome> {
+
+  String userName = "USER";
+  String userRole = 'ADMIN';
+  int userId = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    UserPreferences prefs = UserPreferences();
+    String? name = await prefs.getUsername();
+    String? role = await prefs.getUserRole();
+    int? id = await prefs.getUserId();
+    setState(() {
+      userName = name ?? "User";
+      userRole = role ?? "ADMIN";
+      userId = id ?? 1;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +63,7 @@ class CourseHome extends StatelessWidget {
                     const SizedBox(
                       height: 10,
                     ),
-                    Header(id:  userId, usernameFuture: dbCallUserName()),
+                    Header(),
                     const SizedBox(
                       height: 10,
                     ),
@@ -64,13 +92,7 @@ class CourseHome extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: ButtonOption(
          selected : 1,
-         userId : userId,
       ),
     );
   }
-
-  Future<String> dbCallUserName() async{
-    final DatabaseHelper db = DatabaseHelper();
-      return db.getUsername(userId);
-    }
 }

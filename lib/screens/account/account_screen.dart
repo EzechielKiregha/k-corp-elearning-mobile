@@ -1,30 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:k_corp_elearning/argument/account_arguments.dart';
-import 'package:k_corp_elearning/argument/course_home_argument.dart';
-import 'package:k_corp_elearning/argument/my_course_list_args.dart';
-import 'package:k_corp_elearning/argument/wish_list_arguments.dart';
 import 'package:k_corp_elearning/components/button_option.dart';
 import 'package:k_corp_elearning/components/shopping_cart_option.dart';
-import 'package:k_corp_elearning/db/db_helper.dart';
-// import 'package:k_corp_elearning/db/db_helper.dart';
 import 'package:k_corp_elearning/util/route_names.dart';
 
-// ignore: must_be_immutable
-class AccountScreen extends StatelessWidget {
-  AccountScreen({super.key, required this.userId});
-  final int userId;
-  final DatabaseHelper _dbHelper = DatabaseHelper();
-  String userRole = "";
-  String userName = "";
+import '../../shared_preferences.dart';
 
-  void dbCall() async {
-    userRole = await _dbHelper.getUserRole(userId);
-    userName = await _dbHelper.getUsername(userId);
 
-    print("ID: $userId");
-    print("Name: $userName");
-    print("Role: $userRole");
+class AccountScreen extends StatefulWidget {
+  AccountScreen({super.key});
 
+  @override
+  State<AccountScreen> createState() => _AccountScreenState();
+}
+
+class _AccountScreenState extends State<AccountScreen> {
+  String userName = "USER";
+  String userRole = 'ADMIN';
+  int userId = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    UserPreferences prefs = UserPreferences();
+    String? name = await prefs.getUsername();
+    String? role = await prefs.getUserRole();
+    int? id = await prefs.getUserId();
+    setState(() {
+      userName = name ?? "User";
+      userRole = role ?? "ADMIN";
+      userId = id ?? 1;
+    });
   }
 
   @override
@@ -68,7 +77,7 @@ class AccountScreen extends StatelessWidget {
                         ),
                       ],
                     )
-                
+
                   ],
                 ),
               ),
@@ -85,7 +94,7 @@ class AccountScreen extends StatelessWidget {
                       Icon(Icons.account_circle, size: 60, color: Colors.blue),
                       SizedBox(height: 10),
                       Text(
-                        userName != "null" ? userRole : "Not Loaded",
+                        userName != null ? userName : "Not Loaded",
                         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       Text(
@@ -105,7 +114,7 @@ class AccountScreen extends StatelessWidget {
                     userRole == "ADMIN"
                         ? _buildAccountOption(context, "Manage Courses", RouteNames.manageCourse)
                         : SizedBox.shrink(),
-                    // _buildAccountOption(context, "Settings", RouteNames.settings),
+                    _buildAccountOption(context, "Settings", RouteNames.settings),
                   ],
                 ),
               ),
@@ -117,7 +126,6 @@ class AccountScreen extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: ButtonOption(
          selected : 4,
-         userId : userId,
       ),
     );
   }
@@ -130,23 +138,23 @@ class AccountScreen extends StatelessWidget {
         onTap: () {
           switch (routeName){
             case RouteNames.courseHome:
-              Navigator.pushReplacementNamed(context, routeName,
-                arguments: CourseHomeArguments(userId),
+              Navigator.pushReplacementNamed(context, routeName
               );
               break;
             case RouteNames.wishList:
-              Navigator.pushReplacementNamed(context, routeName,
-                arguments: WishListArguments(userId),
+              Navigator.pushReplacementNamed(context, routeName
               );
             break;
             case RouteNames.accountScreen:
-              Navigator.pushReplacementNamed(context, routeName,
-                arguments: AccountArguments(userId),
+              Navigator.pushReplacementNamed(context, routeName
               );
               break;
             case RouteNames.myCourseList:
-              Navigator.pushReplacementNamed(context, routeName,
-                arguments: MyCourseListArgs(userId),
+              Navigator.pushReplacementNamed(context, routeName
+              );
+              break;
+            case RouteNames.manageCourse:
+              Navigator.pushReplacementNamed(context, routeName
               );
               break;
           }

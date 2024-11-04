@@ -1,4 +1,5 @@
-import 'package:k_corp_elearning/model/course.dart';
+
+import 'package:k_corp_elearning/model/course_db.dart';
 import 'package:k_corp_elearning/model/my_course.dart';
 
 class MyCourseDataProvider {

@@ -1,3 +1,5 @@
+import 'package:k_corp_elearning/model/lecture.dart';
+import 'package:k_corp_elearning/model/section.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:k_corp_elearning/model/course_db.dart';
@@ -21,38 +23,41 @@ class DatabaseHelper {
     return await openDatabase(
       path,
       version: 1,
-      onCreate: (db, version) {
-        db.execute('''
-          CREATE TABLE courses (
-            id TEXT PRIMARY KEY,
-            title TEXT,
-            thumbnailUrl TEXT,
-            description TEXT,
-            createdBy TEXT,
-            createdDate TEXT,
-            rate REAL,
-            isFavorite INTEGER,
-            price REAL,
-            courseCategory TEXT,
-            duration TEXT,
-            lessonNo INTEGER
-          )
-        ''');
-        db.execute('''
-          CREATE TABLE sections (
-            courseId TEXT,
-            name TEXT,
-            FOREIGN KEY(courseId) REFERENCES courses(id)
-          )
-        ''');
-        db.execute('''
-          CREATE TABLE lectures (
-            sectionId TEXT,
-            name TEXT,
-            duration TEXT,
-            FOREIGN KEY(sectionId) REFERENCES sections(name)
-          )
-        ''');
+        onCreate: (db, version) {
+          db.execute('''
+            CREATE TABLE courses (
+              id TEXT PRIMARY KEY,
+              title TEXT,
+              thumbnailUrl TEXT,
+              description TEXT,
+              createdBy TEXT,
+              createdDate TEXT,
+              rate REAL,
+              isFavorite BOOLEAN,
+              price REAL,
+              courseCategory TEXT,
+              duration TEXT,
+              lessonNo INTEGER
+            )
+          ''');
+                  db.execute('''
+            CREATE TABLE sections (
+              id TEXT PRIMARY KEY,
+              courseId TEXT,
+              name TEXT,
+              FOREIGN KEY(courseId) REFERENCES courses(id) ON DELETE CASCADE
+            )
+          ''');
+                  db.execute('''
+            CREATE TABLE lectures (
+              id TEXT PRIMARY KEY ,
+              sectionId TEXT,
+              name TEXT,
+              duration TEXT,
+              FOREIGN KEY(sectionId) REFERENCES sections(id) ON DELETE CASCADE
+            )
+          ''');
+
         db.execute('''
           CREATE TABLE users(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -81,7 +86,7 @@ class DatabaseHelper {
   }
 
    // Function to fetch the username
-  Future<String> getUsername(int userId) async {
+  Future<String?> getUsername(int userId) async {
     final db = await database;
     final result = await db.query(
       'users',
@@ -92,7 +97,7 @@ class DatabaseHelper {
     if (result.isNotEmpty) {
       return result.first['username'] as String;
     }
-    return 'No User';
+    return null;
   }
 
   // Function to fetch the user id
@@ -136,18 +141,11 @@ class DatabaseHelper {
     return res.isNotEmpty ? res.first : null;
   }
 
-  // CRUD Methods for Courses
-  Future<void> insertCourse(Course course) async {
+  // CRUD Method for inserting a Course
+  Future<String> insertCourse(Course course) async {
     final db = await database;
     await db.insert('courses', course.toMap());
-  }
-
-  Future<List<Course>> getCourses() async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('courses');
-    return List.generate(maps.length, (i) {
-      return Course.fromMap(maps[i]);
-    });
+    return course.id; // Return the id of the inserted course
   }
 
   Future<void> updateCourse(Course course) async {
@@ -159,7 +157,6 @@ class DatabaseHelper {
       whereArgs: [course.id],
     );
   }
-
   Future<void> deleteCourse(String id) async {
     final db = await database;
     await db.delete(
@@ -168,5 +165,96 @@ class DatabaseHelper {
       whereArgs: [id],
     );
   }
+
+  // CRUD Method for inserting a Section
+  Future<String> insertSection(Section section) async {
+    final db = await _initDatabase();
+    await db.insert('sections', section.toMap());
+    return section.id; // Return the id of the inserted section
+  }
+
+  // CRUD Method for inserting a Lecture
+  Future<String> insertLecture(Lecture lecture) async {
+    final db = await _initDatabase();
+    await db.insert('lectures', lecture.toMap());
+    return lecture.id; // Return the id of the inserted lecture
+  }
+
+
+  Future<Section> getSectionWithLectures(String sectionId) async {
+    final db = await database;
+
+    // Retrieve the section
+    final sectionMap = await db.query(
+      'sections',
+      where: 'id = ?',
+      whereArgs: [sectionId],
+    );
+
+    // Retrieve the lectures for that section
+    final lecturesMapList = await db.query(
+      'lectures',
+      where: 'sectionId = ?',
+      whereArgs: [sectionId],
+    );
+
+    // Convert each lecture map to a Lecture instance
+    List<Lecture> lectures = lecturesMapList.map((map) => Lecture.fromMap(map)).toList();
+
+    // Create and return the Section with its lectures
+    return Section.fromMap(sectionMap.first, lectures);
+  }
+
+  Future<List<Course>> getCourses() async {
+    final db = await database;
+
+    // Step 1: Get all courses
+    final List<Map<String, dynamic>> courseMaps = await db.query('courses');
+
+    // Step 2: Create a list of Course objects
+    List<Course> courses = [];
+
+    for (var courseMap in courseMaps) {
+      final courseId = courseMap['id'];
+
+      // Step 3: Get sections for each course
+      final List<Map<String, dynamic>> sectionMaps = await db.query(
+        'sections',
+        where: 'courseId = ?',
+        whereArgs: [courseId],
+      );
+
+      // Create a list to hold sections with lectures
+      List<Section> sections = [];
+
+      for (var sectionMap in sectionMaps) {
+        final sectionId = sectionMap['id'];
+
+        // Step 4: Get lectures for each section
+        final List<Map<String, dynamic>> lectureMaps = await db.query(
+          'lectures',
+          where: 'sectionId = ?',
+          whereArgs: [sectionId],
+        );
+
+        // Map lectures for this section
+        List<Lecture> lectures = lectureMaps.map((lectureMap) => Lecture.fromMap(lectureMap)).toList();
+
+        // Create the section with its lectures and add to sections list
+        sections.add(Section.fromMap(sectionMap, lectures));
+      }
+
+      // Step 5: Create the course with its sections
+      Course course = Course.fromMap(courseMap);
+      course.sections = sections;
+
+      // Add the fully populated course to the list
+      courses.add(course);
+    }
+
+    return courses;
+  }
+
+
 }
 

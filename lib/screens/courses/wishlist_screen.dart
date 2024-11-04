@@ -3,9 +3,38 @@ import 'package:k_corp_elearning/components/button_option.dart';
 import 'package:k_corp_elearning/components/shopping_cart_option.dart';
 import 'package:k_corp_elearning/screens/courses/widget/wishlist.dart';
 
-class WishlistScreen extends StatelessWidget {
-  const WishlistScreen({super.key, required this.userId});
-  final int userId; 
+import '../../shared_preferences.dart';
+
+class WishlistScreen extends StatefulWidget {
+  const WishlistScreen({super.key});
+
+  @override
+  State<WishlistScreen> createState() => _WishlistScreenState();
+}
+
+class _WishlistScreenState extends State<WishlistScreen> {
+
+  String userName = "USER";
+  String userRole = 'ADMIN';
+  int userId = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    UserPreferences prefs = UserPreferences();
+    String? name = await prefs.getUsername();
+    String? role = await prefs.getUserRole();
+    int? id = await prefs.getUserId();
+    setState(() {
+      userName = name ?? "User";
+      userRole = role ?? "ADMIN";
+      userId = id ?? 1;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +58,7 @@ class WishlistScreen extends StatelessWidget {
               ),
               const SizedBox(height: 10,),
 
-              Wishlist(),              
+              Wishlist(),
             ],
           ),
         )
@@ -39,7 +68,6 @@ class WishlistScreen extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: ButtonOption(
          selected : 3,
-         userId: userId,
       ),
     );
   }

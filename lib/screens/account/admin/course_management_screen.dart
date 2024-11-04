@@ -15,7 +15,7 @@ class CourseManagementScreen extends StatelessWidget {
           children: [
             ElevatedButton.icon(
               onPressed: () {
-                Navigator.pushNamed(context, RouteNames.courseDetails);
+                Navigator.pushNamed(context, RouteNames.oneCourseDetails);
               },
               icon: Icon(Icons.add),
               label: Text("Create New Course"),

@@ -8,41 +8,41 @@ class CourseDataProvider {
 
   //Section List
   static List<Section> sectionList = [
-    Section("Introduction", [
-      Lecture("Introduction", "01:48 mins"),
-      Lecture("What is Flutter", "05:54 mins"),
-      Lecture("Understanding Flutter Architecture", "04:45 mins"),
-      Lecture("Flutter Alternatives", "06:10 mins"),
-    ]),
-    Section("Flutter Basics", [
-      Lecture("Module Introduction", "02:25 mins"),
-      Lecture("Creating New Project", "05:17 mins"),
-      Lecture("Dart Basics", "17:20 mins"),
-      Lecture("Dart Fundamentals", "11:10 mins"),
-      Lecture("Flutter App Basic", "07:40 mins"),
-    ]),
-    Section("Layouts", [
-      Lecture("Module Introduction", "02:25 mins"),
-      Lecture("Creating New Project", "05:17 mins"),
-      Lecture("Flutter App Basic", "07:40 mins"),
-    ]),
-    Section("Responsive & Adaptive UI", [
-      Lecture("Module Introduction", "02:25 mins"),
-      Lecture("Dart Basics", "17:20 mins"),
-      Lecture("Dart Fundamentals", "11:10 mins"),
-      Lecture("Flutter App Basic", "07:40 mins"),
-    ]),
-    Section("Builing Real App", [
-      Lecture("Module Introduction", "02:25 mins"),
-      Lecture("Creating New Project", "05:17 mins"),
-      Lecture("Flutter App Basic", "07:40 mins"),
-    ]),
-    Section("Responsive & Adaptive UI", [
-      Lecture("Module Introduction", "02:25 mins"),
-      Lecture("Dart Basics", "17:20 mins"),
-      Lecture("Dart Fundamentals", "11:10 mins"),
-      Lecture("Flutter App Basic", "07:40 mins"),
-    ]),
+    // Section("Introduction", [
+    //   Lecture("Introduction", "01:48 mins"),
+    //   Lecture("What is Flutter", "05:54 mins"),
+    //   Lecture("Understanding Flutter Architecture", "04:45 mins"),
+    //   Lecture("Flutter Alternatives", "06:10 mins"),
+    // ]),
+    // Section("Flutter Basics", [
+    //   Lecture("Module Introduction", "02:25 mins"),
+    //   Lecture("Creating New Project", "05:17 mins"),
+    //   Lecture("Dart Basics", "17:20 mins"),
+    //   Lecture("Dart Fundamentals", "11:10 mins"),
+    //   Lecture("Flutter App Basic", "07:40 mins"),
+    // ]),
+    // Section("Layouts", [
+    //   Lecture("Module Introduction", "02:25 mins"),
+    //   Lecture("Creating New Project", "05:17 mins"),
+    //   Lecture("Flutter App Basic", "07:40 mins"),
+    // ]),
+    // Section("Responsive & Adaptive UI", [
+    //   Lecture("Module Introduction", "02:25 mins"),
+    //   Lecture("Dart Basics", "17:20 mins"),
+    //   Lecture("Dart Fundamentals", "11:10 mins"),
+    //   Lecture("Flutter App Basic", "07:40 mins"),
+    // ]),
+    // Section("Builing Real App", [
+    //   Lecture("Module Introduction", "02:25 mins"),
+    //   Lecture("Creating New Project", "05:17 mins"),
+    //   Lecture("Flutter App Basic", "07:40 mins"),
+    // ]),
+    // Section("Responsive & Adaptive UI", [
+    //   Lecture("Module Introduction", "02:25 mins"),
+    //   Lecture("Dart Basics", "17:20 mins"),
+    //   Lecture("Dart Fundamentals", "11:10 mins"),
+    //   Lecture("Flutter App Basic", "07:40 mins"),
+    // ]),
   ];
 
   //Course List

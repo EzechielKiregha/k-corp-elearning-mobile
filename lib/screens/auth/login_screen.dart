@@ -5,6 +5,8 @@ import 'package:k_corp_elearning/util/route_names.dart';
 import 'package:k_corp_elearning/db/db_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../shared_preferences.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -25,22 +27,34 @@ class _LoginScreenState extends State<LoginScreen> {
       final int userId = await _dbHelper.getUserId(username, password);
       
       if (userId != 0) {
+        String role = await _dbHelper.getUserRole(userId);
+        // Save user data to SharedPreferences
+        UserPreferences prefs = UserPreferences();
+        await prefs.saveUserData(userId, username, role);
         Navigator.pushReplacementNamed(
           context,
           RouteNames.courseHome,
           arguments: CourseHomeArguments(userId),
         );
-        String username = await _dbHelper.getUsername(userId);
         print("Name is : $username");
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login failed: Invalid username or password')),
+          SnackBar(content: Text('Login failed: Invalid username or password',
+            style: TextStyle(
+              color: Colors.white,
+            )),
+          backgroundColor: Colors.red,
+          ),
         );
       }
     } catch (e) {
       print("Error: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login error occurred')),
+        SnackBar(content: Text('Login error occurred', style: TextStyle(
+            color: Colors.white,
+        )),
+        backgroundColor: Colors.red,
+        ),
       );
     }
   }
@@ -50,66 +64,69 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       // appBar: AppBar(title: Text("Login")),
-      body: Column(
-        mainAxisAlignment : MainAxisAlignment.center,
+      body: Stack(
         children: [
-          Image.asset("assets/images/intro/login.png", height: 400, width: 400,),
-          SizedBox(
-            height: 300,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 30, right: 30),
-              child: Column(
-                children: [
-                  TextField(
-                    controller: _usernameController,
-                    decoration: InputDecoration(
-                      labelText: "Username",
-                      counterStyle: TextStyle(
-                        color: kBlueColor
-                      ),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  TextField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      labelText: "Password",
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                    ),
-                  ),
-                  const SizedBox(height: 20,),
-                  TextButton(
-                    onPressed: () => Navigator.pushNamed(context, RouteNames.signup),
-                    child: const Text("Don't have an account? Sign up",
-                      style: TextStyle(
-                        color: kBlueColor
+          Column(
+          mainAxisAlignment : MainAxisAlignment.center,
+          children: [
+            Image.asset("assets/images/intro/login.png", height: 300, width: 300,),
+            SizedBox(
+              height: 300,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 30, right: 30),
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: _usernameController,
+                      decoration: InputDecoration(
+                        labelText: "Username",
+                        counterStyle: TextStyle(
+                          color: kBlueColor
+                        ),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: _login,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: kPrimaryColor,
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: _passwordController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        labelText: "Password",
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
                     ),
-                    child: const Text(
-                      "Login",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white
+                    const SizedBox(height: 20,),
+                    TextButton(
+                      onPressed: () => Navigator.pushNamed(context, RouteNames.signup),
+                      child: const Text("Don't have an account? Sign up",
+                        style: TextStyle(
+                          color: kBlueColor
+                        ),
                       ),
-                      
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: _login,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: kPrimaryColor,
                       ),
-                  ),
-                ],
+                      child: const Text(
+                        "Login",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white
+                        ),
+                        
+                        ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          
-        ],
-      ),
+            
+          ],
+        ),
+      ]),
     );
   }
 

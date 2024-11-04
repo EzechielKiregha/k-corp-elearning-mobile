@@ -1,11 +1,28 @@
 class Lecture {
-  final String _name;
+  final String id;
+  late final String sectionId; // Reference to the Section
+  late final String name;
+  final String duration;
 
-  final String _duration;
+  Lecture({required this.id, required this.sectionId, required this.name, required this.duration});
 
-  Lecture(this._name, this._duration);
+  // Convert Lecture to Map
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'sectionId': sectionId,
+      'name': name,
+      'duration': duration,
+    };
+  }
 
-  String get duration => _duration;
-
-  String get name => _name;
+  // Construct Lecture from Map
+  factory Lecture.fromMap(Map<String, dynamic> map) {
+    return Lecture(
+      id: map['id'],
+      sectionId: map['sectionId'],
+      name: map['name'],
+      duration: map['duration'],
+    );
+  }
 }

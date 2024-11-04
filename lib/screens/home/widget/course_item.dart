@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:k_corp_elearning/argument/course_argument.dart';
 import 'package:k_corp_elearning/constants.dart';
-import 'package:k_corp_elearning/model/course.dart';
+import 'package:k_corp_elearning/model/course_db.dart';
 import 'package:k_corp_elearning/util/route_names.dart';
 
 class CourseItem extends StatelessWidget {
   const CourseItem({super.key, required this.course});
 
   final Course course;
+
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +70,7 @@ class CourseItem extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(
-                        height: 5,
+                        height: 2,
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
