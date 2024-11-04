@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:k_corp_elearning/argument/account_arguments.dart';
-import 'package:k_corp_elearning/argument/course_home_argument.dart';
-import 'package:k_corp_elearning/argument/my_course_list_args.dart';
-import 'package:k_corp_elearning/argument/wish_list_arguments.dart';
 import 'package:k_corp_elearning/constants.dart';
 import 'package:k_corp_elearning/util/route_names.dart';
 

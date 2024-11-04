@@ -20,9 +20,6 @@ class _FeaturedCourseState extends State<FeaturedCourse> {
   @override
   Widget build(BuildContext context) {
 
-    List<Course> featuredCourseList = [
-
-    ];
     return Column(
       children: [
         Row(

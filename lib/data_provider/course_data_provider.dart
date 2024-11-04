@@ -1,6 +1,5 @@
 import 'package:k_corp_elearning/model/course.dart';
 import 'package:k_corp_elearning/model/course_category.dart';
-import 'package:k_corp_elearning/model/lecture.dart';
 import 'package:k_corp_elearning/model/section.dart';
 
 class CourseDataProvider {

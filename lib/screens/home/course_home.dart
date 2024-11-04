@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:k_corp_elearning/components/button_option.dart';
 import 'package:k_corp_elearning/components/shopping_cart_option.dart';
 import 'package:k_corp_elearning/constants.dart';
-import 'package:k_corp_elearning/db/db_helper.dart';
 import 'package:k_corp_elearning/screens/home/widget/category_course_list.dart';
 import 'package:k_corp_elearning/screens/home/widget/course_search.dart';
 import 'package:k_corp_elearning/screens/home/widget/featured_course.dart';
