@@ -7,9 +7,8 @@ import 'package:k_corp_elearning/screens/home/widget/course_search.dart';
 import 'package:k_corp_elearning/screens/home/widget/featured_course.dart';
 import 'package:k_corp_elearning/screens/home/widget/header.dart';
 import 'package:k_corp_elearning/screens/home/widget/offers.dart';
+import 'package:k_corp_elearning/shared_preferences.dart';
 
-import '../../shared_preferences.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
 
 class CourseHome extends StatefulWidget {
   const CourseHome({super.key});
