@@ -45,12 +45,12 @@ class _HeaderState extends State<Header> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Welcome $userName",
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                   SizedBox(
                     height: 10,
                   ),
-                  Text("Let's learning something today",
+                  Text("learning something today",
                     style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ],

@@ -13,7 +13,6 @@ class Course {
   final String courseCategory;
   final String duration;
   final int lessonNo;
-  late final List<Section> sections;
 
   Course({
     required this.id,
@@ -28,7 +27,6 @@ class Course {
     required this.courseCategory,
     required this.duration,
     required this.lessonNo,
-    required this.sections,
   });
 
   // Convert Course to a Map
@@ -64,7 +62,6 @@ class Course {
       courseCategory: map['courseCategory'],
       duration: map['duration'],
       lessonNo: map['lessonNo'],
-      sections: [], // Add sections later if needed
     );
   }
 }

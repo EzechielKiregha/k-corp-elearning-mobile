@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:k_corp_elearning/argument/course_home_argument.dart';
 import 'package:k_corp_elearning/constants.dart';
+import 'package:k_corp_elearning/model/course_db.dart';
 import 'package:k_corp_elearning/util/route_names.dart';
 import 'package:k_corp_elearning/db/db_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,9 +29,12 @@ class _LoginScreenState extends State<LoginScreen> {
       
       if (userId != 0) {
         String role = await _dbHelper.getUserRole(userId);
+        List<Course> courses = await _dbHelper.getCourses();
         // Save user data to SharedPreferences
         UserPreferences prefs = UserPreferences();
         await prefs.saveUserData(userId, username, role);
+        await prefs.cacheCourses(courses);
+
         Navigator.pushReplacementNamed(
           context,
           RouteNames.courseHome,
@@ -48,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     } catch (e) {
-      print("Error: $e");
+      print("ERROR: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Login error occurred', style: TextStyle(
             color: Colors.white,
@@ -63,7 +67,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(title: Text("Login")),
+      resizeToAvoidBottomInset: true,
+      appBar: AppBar(title: Text("Login")),
       body: Stack(
         children: [
           Column(

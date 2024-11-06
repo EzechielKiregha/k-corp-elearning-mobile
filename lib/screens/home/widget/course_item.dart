@@ -9,7 +9,6 @@ class CourseItem extends StatelessWidget {
 
   final Course course;
 
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:k_corp_elearning/argument/checkout_argument.dart';
 import 'package:k_corp_elearning/argument/course_argument.dart';
+import 'package:k_corp_elearning/notifier/course_category_change_notifier.dart';
 import 'package:k_corp_elearning/screens/account/account_screen.dart';
 import 'package:k_corp_elearning/screens/account/admin/course_creation_screen.dart';
 import 'package:k_corp_elearning/screens/account/admin/course_management_screen.dart';
@@ -14,9 +15,19 @@ import 'package:k_corp_elearning/screens/intro/intro_screen.dart';
 import 'package:k_corp_elearning/screens/shopping_cart_screen/checkout_screen.dart';
 import 'package:k_corp_elearning/screens/shopping_cart_screen/shopping_cart_screen.dart';
 import 'package:k_corp_elearning/util/route_names.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => CourseCategoryChangeNotifier(),
+        ),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

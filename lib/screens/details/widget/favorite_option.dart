@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:k_corp_elearning/db/db_helper.dart';
 import 'package:k_corp_elearning/model/course_db.dart';
 
 class FavoriteOption extends StatefulWidget {
@@ -15,6 +16,12 @@ class FavoriteOption extends StatefulWidget {
 class _FavoriteOptionState extends State<FavoriteOption> {
 
   bool isFavorite = false;
+  final DatabaseHelper dbHelper = DatabaseHelper();
+
+
+  void dbLoad(Course course) async{
+    dbHelper.updateCourse(course);
+  }
 
   @override
   void initState() {
@@ -22,7 +29,7 @@ class _FavoriteOptionState extends State<FavoriteOption> {
     super.initState();
 
     isFavorite = widget.course.isFavorite;
-
+    dbLoad(widget.course);
 
   }
 

@@ -37,7 +37,8 @@ class _WishlistState extends State<Wishlist> {
     return Card(
       child: ListTile(
         leading: Image.asset(
-          course.thumbnailUrl
+          course.thumbnailUrl,
+
         ),
         title: Text(
           course.title,

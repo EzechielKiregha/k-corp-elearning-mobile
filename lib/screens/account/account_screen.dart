@@ -1,13 +1,19 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:k_corp_elearning/components/button_option.dart';
 import 'package:k_corp_elearning/components/shopping_cart_option.dart';
+import 'package:k_corp_elearning/db/db_helper.dart';
+import 'package:k_corp_elearning/db/populate_data.dart';
+import 'package:k_corp_elearning/model/course_db.dart';
 import 'package:k_corp_elearning/util/route_names.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../shared_preferences.dart';
 
 
 class AccountScreen extends StatefulWidget {
-  AccountScreen({super.key});
+  const AccountScreen({super.key});
 
   @override
   State<AccountScreen> createState() => _AccountScreenState();
@@ -17,6 +23,10 @@ class _AccountScreenState extends State<AccountScreen> {
   String userName = "USER";
   String userRole = 'ADMIN';
   int userId = 1;
+  List<Course> allCourses = [];
+  List<Course> courses = [];
+  final DatabaseHelper dbHelper = DatabaseHelper();
+
 
   @override
   void initState() {
@@ -34,6 +44,22 @@ class _AccountScreenState extends State<AccountScreen> {
       userRole = role ?? "ADMIN";
       userId = id ?? 1;
     });
+  }
+
+  void loadDB() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? coursesJson = prefs.getString('cachedCourses');
+    courses = dbHelper.getCourses() as List<Course> ;
+
+    for (Course course in courses){
+      print("Course Name: "+course.title);
+    }
+
+    if (coursesJson != null) {
+      // Decode JSON string back to list of Course objects
+      List<dynamic> coursesList = jsonDecode(coursesJson);
+      allCourses = coursesList.map((json) => Course.fromMap(json)).toList();
+    }
   }
 
   @override
@@ -94,7 +120,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       Icon(Icons.account_circle, size: 60, color: Colors.blue),
                       SizedBox(height: 10),
                       Text(
-                        userName != null ? userName : "Not Loaded",
+                        userName ?? "Not Loaded",
                         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       Text(
@@ -114,6 +140,9 @@ class _AccountScreenState extends State<AccountScreen> {
                     userRole == "ADMIN"
                         ? _buildAccountOption(context, "Manage Courses", RouteNames.manageCourse)
                         : SizedBox.shrink(),
+                    courses.isEmpty
+                        ? _buildAccountOption(context, "Populate Courses", '/gen')
+                        : SizedBox.shrink(),
                     _buildAccountOption(context, "Settings", RouteNames.settings),
                   ],
                 ),
@@ -131,11 +160,12 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Widget _buildAccountOption(BuildContext context, String title, String routeName) {
+
     return Card(
       child: ListTile(
         title: Text(title),
         trailing: Icon(Icons.arrow_forward),
-        onTap: () {
+        onTap: () async {
           switch (routeName){
             case RouteNames.courseHome:
               Navigator.pushReplacementNamed(context, routeName
@@ -154,9 +184,14 @@ class _AccountScreenState extends State<AccountScreen> {
               );
               break;
             case RouteNames.manageCourse:
-              Navigator.pushReplacementNamed(context, routeName
+              Navigator.pushNamed(context, routeName
               );
               break;
+            case '/gen':
+
+              if (courses.isEmpty){
+                populateDatabase();
+              }
           }
         },
       ),
@@ -164,8 +199,8 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   void logoutUser(BuildContext context) async {
-    // final prefs = await SharedPreferences.getInstance();
-    // await prefs.clear(); // or use prefs.remove('username') to remove a specific key
+    UserPreferences prefs = UserPreferences();
+    await prefs.clearUserData();
     Navigator.pushReplacementNamed(context, RouteNames.intro);
   }
 }

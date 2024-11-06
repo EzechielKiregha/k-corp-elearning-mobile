@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:k_corp_elearning/db/db_helper.dart';
 import 'package:k_corp_elearning/model/course_category.dart';
@@ -5,6 +7,7 @@ import 'package:k_corp_elearning/model/course_db.dart';
 import 'package:k_corp_elearning/notifier/course_category_change_notifier.dart';
 import 'package:k_corp_elearning/screens/home/widget/course_item.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FeaturedCourse extends StatefulWidget {
   const FeaturedCourse({super.key});
@@ -15,7 +18,6 @@ class FeaturedCourse extends StatefulWidget {
 
 class _FeaturedCourseState extends State<FeaturedCourse> {
 
-  final DatabaseHelper _dbHelper = DatabaseHelper();
 
   @override
   Widget build(BuildContext context) {
@@ -56,14 +58,21 @@ class _FeaturedCourseState extends State<FeaturedCourse> {
                 return Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
                 // Display error message if something goes wrong
+                print("Error: ${snapshot.error}");
                 return Center(child: Text("Error: ${snapshot.error}"));
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 // Show a message if no courses are available
-                return Center(child: Text("No courses available"));
+                return Center(child: Column(
+                  mainAxisAlignment : MainAxisAlignment.center,
+                  children: [
+                    Image.asset("assets/images/intro/no-content.png", height: 160, width: 160,),
+                    Text("No courses available"),
+                  ],
+                ));
               }
               return ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: 10,
+                itemCount: snapshot.data!.length,
                 itemBuilder: (context, i){
                   Course course = snapshot.data![i];
                   return CourseItem(course: course);
@@ -79,15 +88,20 @@ class _FeaturedCourseState extends State<FeaturedCourse> {
     // Retrieve the selected category from the notifier
     var category = Provider.of<CourseCategoryChangeNotifier>(context).Category;
 
-    // Fetch all courses from the database
-    List<Course> allCourses = await _dbHelper.getCourses();
-
-    // Apply category filter if a specific category is selected
-    if (category != CourseCategory.all) {
-      // Filter courses by the selected category
-      allCourses = allCourses.where((course) => course.courseCategory == category.title).toList();
+    // retrieve cached courses
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? coursesJson = prefs.getString('cachedCourses');
+    List<Course> allCourses = [];
+    if (coursesJson != null) {
+      // Decode JSON string back to list of Course objects
+      List<dynamic> coursesList = jsonDecode(coursesJson);
+      allCourses = coursesList.map((json) => Course.fromMap(json)).toList();
+      // Apply category filter if a specific category is selected
+      if (category != CourseCategory.all) {
+        // Filter courses by the selected category
+        allCourses = allCourses.where((course) => course.courseCategory == category.title).toList();
+      }
     }
-
     return allCourses;
   }
 }

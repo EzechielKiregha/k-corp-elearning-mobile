@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:k_corp_elearning/argument/checkout_argument.dart';
 import 'package:k_corp_elearning/constants.dart';
 import 'package:k_corp_elearning/data_provider/shopping_cart_data_provider.dart';
+import 'package:k_corp_elearning/db/db_helper.dart';
 import 'package:k_corp_elearning/model/course_db.dart';
 import 'package:k_corp_elearning/screens/details/widget/favorite_option.dart';
 import 'package:k_corp_elearning/model/section.dart';
@@ -9,10 +10,29 @@ import 'package:k_corp_elearning/util/route_names.dart';
 import 'package:k_corp_elearning/util/util.dart';
 import 'package:readmore/readmore.dart';
 
-class CourseDetails extends StatelessWidget {
+class CourseDetails extends StatefulWidget {
   const CourseDetails({super.key, required this.course});
 
   final Course course;
+
+  @override
+  State<CourseDetails> createState() => _CourseDetailsState();
+}
+
+class _CourseDetailsState extends State<CourseDetails> {
+  List<Section> sections = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loadSections();
+  }
+  void _loadSections() async {
+    final DatabaseHelper _dbHelper = DatabaseHelper();
+    sections = await _dbHelper.getSectionsByCourseId(widget.course.id);
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -65,22 +85,22 @@ class CourseDetails extends StatelessWidget {
                                 ),
                               ),
                             ),
-                    
+
                           ],
                         )
-                    
+
                       ],
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: 
+                    child:
                       Stack(
                         alignment: Alignment.center,
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.all(Radius.circular(10)),
-                            child: Image.asset(course.thumbnailUrl)
+                            child: Image.asset(widget.course.thumbnailUrl)
                           ),
                           Column(
                             children: [
@@ -120,14 +140,14 @@ class CourseDetails extends StatelessWidget {
                       child: Column(
                         children: [
                           Text(
-                              course.title,
+                              widget.course.title,
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.grey.shade800,
                               ),
                             ),
-                        
+
                           SizedBox(
                             height: 10,
                           ),
@@ -144,7 +164,7 @@ class CourseDetails extends StatelessWidget {
                                     width: 10,
                                   ),
                                   Text(
-                                    course.createdBy,
+                                    widget.course.createdBy,
                                     style: const TextStyle(
                                       fontSize: 16,
                                       color: kBlueColor,
@@ -152,8 +172,8 @@ class CourseDetails extends StatelessWidget {
                                   )
                                 ],
                               ),
-                              // favorite 
-                              FavoriteOption(course: course,)
+                              // favorite
+                              FavoriteOption(course: widget.course,)
                             ],
                           ),
                           Row(
@@ -167,7 +187,7 @@ class CourseDetails extends StatelessWidget {
                                     width: 10,
                                   ),
                                   Text(
-                                    '${course.lessonNo}',
+                                    '${widget.course.lessonNo}',
                                     style: greyStyle,
                                   )
                                 ],
@@ -184,7 +204,7 @@ class CourseDetails extends StatelessWidget {
                                     width: 10,
                                   ),
                                   Text(
-                                    course.duration,
+                                    widget.course.duration,
                                     style: greyStyle,
                                   )
                                 ],
@@ -203,7 +223,7 @@ class CourseDetails extends StatelessWidget {
                                     width: 10,
                                   ),
                                   Text(
-                                    '${course.rate}',
+                                    '${widget.course.rate}',
                                     style: greyStyle,
                                   )
                                 ],
@@ -211,7 +231,7 @@ class CourseDetails extends StatelessWidget {
                             ],
                           ),
                           const SizedBox(height: 10,),
-                          ReadMoreText(course.description,
+                          ReadMoreText(widget.course.description,
                             trimLines: 2,
                             trimMode: TrimMode.Line,
                             trimCollapsedText: "Show more",
@@ -244,7 +264,7 @@ class CourseDetails extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                "(${course.sections.length})",
+                                "(${sections.length})",
                                 style: TextStyle(
                                   color: Colors.grey.shade700,
                                   fontSize: 16,
@@ -256,7 +276,7 @@ class CourseDetails extends StatelessWidget {
                           ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            itemCount: course.sections.length,
+                            itemCount: sections.length,
                             itemBuilder: (context, i) {
                               return buildCourseContent(i);
                             }
@@ -280,7 +300,7 @@ class CourseDetails extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '\$${course.price}',
+                        '\$${widget.course.price}',
                         style: TextStyle(
                           fontSize: 30,
                           color: Colors.grey.shade900,
@@ -291,9 +311,9 @@ class CourseDetails extends StatelessWidget {
                           ElevatedButton(
                             onPressed: (){
                               String message = "Course is already added to cart";
-                              if(!ShoppingCartDataProvider.shoppingCartCourseList.contains(course)){
+                              if(!ShoppingCartDataProvider.shoppingCartCourseList.contains(widget.course)){
                                 message = "Course added successfully!";
-                                ShoppingCartDataProvider.addCourse(course);
+                                ShoppingCartDataProvider.addCourse(widget.course);
                               }
                               // show message toast
                               Util.showMeassageWithAction(context, message, "View", (){
@@ -316,7 +336,7 @@ class CourseDetails extends StatelessWidget {
                           ElevatedButton(
                             onPressed: (){
                               Navigator.pushReplacementNamed(context, RouteNames.checkout,
-                                arguments: CheckoutArgument([course], course.price)
+                                arguments: CheckoutArgument([widget.course], widget.course.price)
                               );
                             },
                             style: ElevatedButton.styleFrom(
@@ -343,9 +363,9 @@ class CourseDetails extends StatelessWidget {
     );
   }
 
-  // function to build course content 
+  // function to build course content
   Widget buildCourseContent(int i){
-    Section section = course.sections[i];
+    Section section = sections[i];
     return ExpansionTile(
       title: Text(
         "Section ${i + 1} - ${section.name}",

@@ -157,13 +157,17 @@ class DatabaseHelper {
       whereArgs: [course.id],
     );
   }
-  Future<void> deleteCourse(String id) async {
+  Future<bool> deleteCourse(String id) async {
     final db = await database;
-    await db.delete(
+    var res =  await db.delete(
       'courses',
       where: "id = ?",
       whereArgs: [id],
     );
+    if(res.isEven) {
+      return true;
+    }
+    return false;
   }
 
   // CRUD Method for inserting a Section
@@ -205,6 +209,28 @@ class DatabaseHelper {
     return Section.fromMap(sectionMap.first, lectures);
   }
 
+  Future<List<Section>> getSectionsByCourseId(String courseId) async {
+    final db = await database;
+    List<Section> allCourseSections = [];
+
+    // Retrieve the section
+    final sectionMap = await db.query(
+      'sections',
+      where: 'courseId = ?',
+      whereArgs: [courseId],
+    );
+
+    List<Section> sections = sectionMap.map((map) => Section.fromMap(map, [])).toList();
+
+    for (Section section in sections){
+      Section oneSection;
+      oneSection = await getSectionWithLectures(section.id);
+      allCourseSections.add(oneSection);
+    }
+
+    return allCourseSections;
+  }
+
   Future<List<Course>> getCourses() async {
     final db = await database;
 
@@ -215,39 +241,7 @@ class DatabaseHelper {
     List<Course> courses = [];
 
     for (var courseMap in courseMaps) {
-      final courseId = courseMap['id'];
-
-      // Step 3: Get sections for each course
-      final List<Map<String, dynamic>> sectionMaps = await db.query(
-        'sections',
-        where: 'courseId = ?',
-        whereArgs: [courseId],
-      );
-
-      // Create a list to hold sections with lectures
-      List<Section> sections = [];
-
-      for (var sectionMap in sectionMaps) {
-        final sectionId = sectionMap['id'];
-
-        // Step 4: Get lectures for each section
-        final List<Map<String, dynamic>> lectureMaps = await db.query(
-          'lectures',
-          where: 'sectionId = ?',
-          whereArgs: [sectionId],
-        );
-
-        // Map lectures for this section
-        List<Lecture> lectures = lectureMaps.map((lectureMap) => Lecture.fromMap(lectureMap)).toList();
-
-        // Create the section with its lectures and add to sections list
-        sections.add(Section.fromMap(sectionMap, lectures));
-      }
-
-      // Step 5: Create the course with its sections
       Course course = Course.fromMap(courseMap);
-      course.sections = sections;
-
       // Add the fully populated course to the list
       courses.add(course);
     }
